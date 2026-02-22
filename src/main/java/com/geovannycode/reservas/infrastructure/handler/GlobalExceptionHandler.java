@@ -26,14 +26,14 @@ public class GlobalExceptionHandler implements ExceptionMapper<BusinessException
         LOG.warnf("BusinessException capturada [%s]: %s",
                 exception.getClass().getSimpleName(), exception.getMessage());
 
-        var status = exception.getHttpStatus();
+        var statusCode = exception.getHttpStatusCode();
         var errorResponse = ErrorResponse.of(
-                status.getStatusCode(),
+                statusCode,
                 exception.getMessage(),
                 uriInfo != null ? uriInfo.getPath() : "desconocida"
         );
 
-        return Response.status(status)
+        return Response.status(statusCode)
                 .entity(errorResponse)
                 .build();
     }
