@@ -8,14 +8,19 @@ import jakarta.ws.rs.core.Response;
  */
 public class BusinessException extends RuntimeException {
 
-    private final Response.Status httpStatus;
+    private final int httpStatusCode;
 
     public BusinessException(String message, Response.Status httpStatus) {
         super(message);
-        this.httpStatus = httpStatus;
+        this.httpStatusCode = httpStatus.getStatusCode();
     }
 
-    public Response.Status getHttpStatus() {
-        return httpStatus;
+    public BusinessException(String message, int httpStatusCode) {
+        super(message);
+        this.httpStatusCode = httpStatusCode;
+    }
+
+    public int getHttpStatusCode() {
+        return httpStatusCode;
     }
 }
