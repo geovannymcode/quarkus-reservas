@@ -2,7 +2,7 @@
 # Dockerfile para ejecutar la aplicación en modo JVM.
 #
 # Construir la imagen:
-#   docker build -f Dockerfile.jvm -t reservas-profesionales:jvm .
+#   docker build -f Dockerfile.jvm -t quarkus-reservas:jvm .
 #
 # Ejecutar:
 #   docker run -i --rm -p 8080:8080 \
@@ -11,7 +11,7 @@
 #     -e DB_NAME=reservas_db \
 #     -e DB_USERNAME=postgres \
 #     -e DB_PASSWORD=postgres \
-#     reservas-profesionales:jvm
+#     quarkus-reservas:jvm
 ###
 FROM registry.access.redhat.com/ubi8/openjdk-21:1.20
 
