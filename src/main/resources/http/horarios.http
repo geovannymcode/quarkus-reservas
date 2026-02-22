@@ -1,0 +1,119 @@
+### Variables
+@baseUrl = http://localhost:8080/api/horarios
+@profesionalLuis = a1000000-0000-0000-0000-000000000001
+@profesionalMaria = a1000000-0000-0000-0000-000000000002
+@profesionalCarlos = a1000000-0000-0000-0000-000000000003
+@profesionalAna = a1000000-0000-0000-0000-000000000004
+
+### -------------------------------------------------------
+### 1. Listar todos los horarios disponibles
+### -------------------------------------------------------
+GET {{baseUrl}}
+Accept: application/json
+
+### -------------------------------------------------------
+### 2. Listar horarios de Luis Salazar (Psicología Clínica)
+### -------------------------------------------------------
+GET {{baseUrl}}/profesional/{{profesionalLuis}}
+Accept: application/json
+
+### -------------------------------------------------------
+### 3. Listar horarios de María Torres (Mentoría Empresarial)
+### -------------------------------------------------------
+GET {{baseUrl}}/profesional/{{profesionalMaria}}
+Accept: application/json
+
+### -------------------------------------------------------
+### 4. Registrar un nuevo horario para Ana Paredes
+### -------------------------------------------------------
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "profesionalId": "a1000000-0000-0000-0000-000000000004",
+  "fecha": "2026-03-10",
+  "horaInicio": "09:00",
+  "horaFin": "12:00"
+}
+
+### -------------------------------------------------------
+### 5. Registrar otro horario para Ana Paredes (tarde)
+### -------------------------------------------------------
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "profesionalId": "a1000000-0000-0000-0000-000000000004",
+  "fecha": "2026-03-10",
+  "horaInicio": "14:00",
+  "horaFin": "17:00"
+}
+
+### -------------------------------------------------------
+### 6. Horario solapado - debe retornar 409 Conflict
+###    (Ana Paredes ya tiene 09:00-12:00 el 2026-03-10)
+### -------------------------------------------------------
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "profesionalId": "a1000000-0000-0000-0000-000000000004",
+  "fecha": "2026-03-10",
+  "horaInicio": "11:00",
+  "horaFin": "13:00"
+}
+
+### -------------------------------------------------------
+### 7. Hora fin anterior a hora inicio - debe retornar 400
+### -------------------------------------------------------
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "profesionalId": "a1000000-0000-0000-0000-000000000004",
+  "fecha": "2026-03-15",
+  "horaInicio": "14:00",
+  "horaFin": "10:00"
+}
+
+### -------------------------------------------------------
+### 8. Profesional inexistente - debe retornar 404
+### -------------------------------------------------------
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "profesionalId": "00000000-0000-0000-0000-000000000000",
+  "fecha": "2026-03-15",
+  "horaInicio": "09:00",
+  "horaFin": "12:00"
+}
+
+### -------------------------------------------------------
+### 9. Datos inválidos (campos nulos) - debe retornar 400
+### -------------------------------------------------------
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "profesionalId": null,
+  "fecha": null,
+  "horaInicio": null,
+  "horaFin": null
+}
+
+### -------------------------------------------------------
+### 10. Eliminar un horario existente (demo: Luis mañana 09-12)
+### -------------------------------------------------------
+DELETE {{baseUrl}}/c3000000-0000-0000-0000-000000000001
+
+### -------------------------------------------------------
+### 11. Eliminar horario inexistente - debe retornar 404
+### -------------------------------------------------------
+DELETE {{baseUrl}}/00000000-0000-0000-0000-000000000000
+
+### -------------------------------------------------------
+### 12. Listar horarios de profesional sin horarios registrados
+### -------------------------------------------------------
+GET {{baseUrl}}/profesional/a1000000-0000-0000-0000-000000000005
+Accept: application/json

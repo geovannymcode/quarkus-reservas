@@ -1,0 +1,102 @@
+### Variables
+@baseUrl = http://localhost:8080/api/profesionales
+@profesionalLuis = a1000000-0000-0000-0000-000000000001
+@profesionalMaria = a1000000-0000-0000-0000-000000000002
+@profesionalInactivo = a1000000-0000-0000-0000-000000000005
+
+### -------------------------------------------------------
+### 1. Listar todos los profesionales
+### -------------------------------------------------------
+GET {{baseUrl}}
+Accept: application/json
+
+### -------------------------------------------------------
+### 2. Buscar profesional por ID (Luis Salazar - Psicología Clínica)
+### -------------------------------------------------------
+GET {{baseUrl}}/{{profesionalLuis}}
+Accept: application/json
+
+### -------------------------------------------------------
+### 3. Buscar profesional inexistente - debe retornar 404
+### -------------------------------------------------------
+GET {{baseUrl}}/00000000-0000-0000-0000-000000000099
+Accept: application/json
+
+### -------------------------------------------------------
+### 4. Crear un nuevo profesional
+### -------------------------------------------------------
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "nombres": "Pedro",
+  "apellidos": "Quintero Aranda",
+  "especialidad": "Terapia Ocupacional",
+  "estadoActivo": true
+}
+
+### -------------------------------------------------------
+### 5. Crear profesional con campos vacíos - debe retornar 400
+### -------------------------------------------------------
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "nombres": "",
+  "apellidos": "Pérez",
+  "especialidad": "Psicología"
+}
+
+### -------------------------------------------------------
+### 6. Crear profesional sin especialidad - debe retornar 400
+### -------------------------------------------------------
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "nombres": "Laura",
+  "apellidos": "Gómez",
+  "especialidad": ""
+}
+
+### -------------------------------------------------------
+### 7. Actualizar profesional (reemplazar {{profesionalId}} con UUID del paso 4)
+### -------------------------------------------------------
+PUT {{baseUrl}}/{{profesionalId}}
+Content-Type: application/json
+
+{
+  "nombres": "Pedro Actualizado",
+  "apellidos": "Quintero Aranda",
+  "especialidad": "Neuropsicología",
+  "estadoActivo": true
+}
+
+### -------------------------------------------------------
+### 8. Actualizar profesional inexistente - debe retornar 404
+### -------------------------------------------------------
+PUT {{baseUrl}}/00000000-0000-0000-0000-000000000099
+Content-Type: application/json
+
+{
+  "nombres": "Fantasma",
+  "apellidos": "No Existe",
+  "especialidad": "Ninguna",
+  "estadoActivo": true
+}
+
+### -------------------------------------------------------
+### 9. Eliminar profesional (reemplazar {{profesionalId}} con UUID del paso 4)
+### -------------------------------------------------------
+DELETE {{baseUrl}}/{{profesionalId}}
+
+### -------------------------------------------------------
+### 10. Eliminar profesional inexistente - debe retornar 404
+### -------------------------------------------------------
+DELETE {{baseUrl}}/00000000-0000-0000-0000-000000000099
+
+### -------------------------------------------------------
+### 11. Ranking de profesionales por reservas activas
+### -------------------------------------------------------
+GET {{baseUrl}}/ranking/por-reservas-activas
+Accept: application/json

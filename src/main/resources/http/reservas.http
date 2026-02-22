@@ -1,0 +1,176 @@
+### Variables
+@baseUrl = http://localhost:8080/api/reservas
+@profesionalLuis = a1000000-0000-0000-0000-000000000001
+@profesionalMaria = a1000000-0000-0000-0000-000000000002
+@profesionalInactivo = a1000000-0000-0000-0000-000000000005
+@clienteAna = b2000000-0000-0000-0000-000000000001
+@clienteMarco = b2000000-0000-0000-0000-000000000002
+@clienteInactivo = b2000000-0000-0000-0000-000000000005
+@reservaActiva1 = d4000000-0000-0000-0000-000000000001
+@reservaActiva2 = d4000000-0000-0000-0000-000000000002
+@reservaCancelada = d4000000-0000-0000-0000-000000000004
+@reservaCompletada = d4000000-0000-0000-0000-000000000005
+
+### -------------------------------------------------------
+### 1. Listar todas las reservas
+### -------------------------------------------------------
+GET {{baseUrl}}
+Accept: application/json
+
+### -------------------------------------------------------
+### 2. Buscar reserva activa por ID
+### -------------------------------------------------------
+GET {{baseUrl}}/{{reservaActiva1}}
+Accept: application/json
+
+### -------------------------------------------------------
+### 3. Buscar reserva inexistente - debe retornar 404
+### -------------------------------------------------------
+GET {{baseUrl}}/00000000-0000-0000-0000-000000000099
+Accept: application/json
+
+### -------------------------------------------------------
+### 4. Crear reserva exitosa
+###    Luis Salazar tiene horario disponible CURRENT_DATE+1 de 09:00-12:00
+###    Reservar de 11:00 a 12:00
+### -------------------------------------------------------
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "fecha": "{{$date.tomorrow}}",
+  "horaInicio": "11:00",
+  "horaFin": "12:00",
+  "clienteId": "{{clienteMarco}}",
+  "profesionalId": "{{profesionalLuis}}"
+}
+
+### -------------------------------------------------------
+### 5. Crear reserva solapada - debe retornar 409
+###    Misma fecha/hora que la reserva demo (CURRENT_DATE+2, 09:00-10:00)
+###    con Luis Salazar que ya tiene reserva activa
+### -------------------------------------------------------
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "fecha": "{{$date.tomorrow}}",
+  "horaInicio": "11:00",
+  "horaFin": "12:00",
+  "clienteId": "{{clienteAna}}",
+  "profesionalId": "{{profesionalLuis}}"
+}
+
+### -------------------------------------------------------
+### 6. Crear reserva sin horario disponible - debe retornar 400
+###    Fecha lejana sin horario registrado
+### -------------------------------------------------------
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "fecha": "2099-12-31",
+  "horaInicio": "10:00",
+  "horaFin": "11:00",
+  "clienteId": "{{clienteAna}}",
+  "profesionalId": "{{profesionalLuis}}"
+}
+
+### -------------------------------------------------------
+### 7. Crear reserva con profesional inactivo - debe retornar 422
+### -------------------------------------------------------
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "fecha": "2026-03-15",
+  "horaInicio": "10:00",
+  "horaFin": "11:00",
+  "clienteId": "{{clienteAna}}",
+  "profesionalId": "{{profesionalInactivo}}"
+}
+
+### -------------------------------------------------------
+### 8. Crear reserva con cliente inactivo - debe retornar 422
+### -------------------------------------------------------
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "fecha": "2026-03-15",
+  "horaInicio": "10:00",
+  "horaFin": "11:00",
+  "clienteId": "{{clienteInactivo}}",
+  "profesionalId": "{{profesionalLuis}}"
+}
+
+### -------------------------------------------------------
+### 9. Crear reserva con hora fin anterior a hora inicio - debe retornar 400
+### -------------------------------------------------------
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "fecha": "2026-03-15",
+  "horaInicio": "14:00",
+  "horaFin": "09:00",
+  "clienteId": "{{clienteAna}}",
+  "profesionalId": "{{profesionalLuis}}"
+}
+
+### -------------------------------------------------------
+### 10. Crear reserva sin campos obligatorios - debe retornar 400
+### -------------------------------------------------------
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "fecha": "2026-03-15"
+}
+
+### -------------------------------------------------------
+### 11. Crear reserva con profesional inexistente - debe retornar 404
+### -------------------------------------------------------
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "fecha": "2026-03-15",
+  "horaInicio": "10:00",
+  "horaFin": "11:00",
+  "clienteId": "{{clienteAna}}",
+  "profesionalId": "00000000-0000-0000-0000-000000000099"
+}
+
+### -------------------------------------------------------
+### 12. Cancelar reserva activa
+### -------------------------------------------------------
+PATCH {{baseUrl}}/{{reservaActiva1}}/cancelar
+
+### -------------------------------------------------------
+### 13. Cancelar reserva ya cancelada - debe retornar 400
+###     (ejecutar después del paso 12)
+### -------------------------------------------------------
+PATCH {{baseUrl}}/{{reservaActiva1}}/cancelar
+
+### -------------------------------------------------------
+### 14. Cancelar reserva completada - debe retornar 400
+### -------------------------------------------------------
+PATCH {{baseUrl}}/{{reservaCompletada}}/cancelar
+
+### -------------------------------------------------------
+### 15. Cancelar reserva inexistente - debe retornar 404
+### -------------------------------------------------------
+PATCH {{baseUrl}}/00000000-0000-0000-0000-000000000099/cancelar
+
+### -------------------------------------------------------
+### 16. Reservas agrupadas por fecha (consulta funcional)
+### -------------------------------------------------------
+GET {{baseUrl}}/agrupadas/por-fecha
+Accept: application/json
+
+### -------------------------------------------------------
+### 17. Ranking de profesionales por reservas activas
+### -------------------------------------------------------
+GET http://localhost:8080/api/profesionales/ranking/por-reservas-activas
+Accept: application/json
