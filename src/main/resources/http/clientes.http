@@ -1,0 +1,95 @@
+### Variables
+@baseUrl = http://localhost:8080/api/clientes
+
+### -------------------------------------------------------
+### 1. Listar todos los clientes
+### -------------------------------------------------------
+GET {{baseUrl}}
+Accept: application/json
+
+### -------------------------------------------------------
+### 2. Crear un nuevo cliente
+### -------------------------------------------------------
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "nombres": "Ana María",
+  "apellidos": "Torres Vega",
+  "email": "ana.torres@email.com",
+  "telefono": "+57 310 456 7890",
+  "estadoActivo": true
+}
+
+### -------------------------------------------------------
+### 3. Crear otro cliente
+### -------------------------------------------------------
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "nombres": "Carlos",
+  "apellidos": "Ramírez López",
+  "email": "carlos.ramirez@email.com",
+  "telefono": "+57 300 123 4567",
+  "estadoActivo": true
+}
+
+### -------------------------------------------------------
+### 4. Buscar cliente por ID (reemplazar con un UUID real)
+### -------------------------------------------------------
+GET {{baseUrl}}/{{clienteId}}
+Accept: application/json
+
+### -------------------------------------------------------
+### 5. Actualizar un cliente (reemplazar clienteId)
+### -------------------------------------------------------
+PUT {{baseUrl}}/{{clienteId}}
+Content-Type: application/json
+
+{
+  "nombres": "Ana María",
+  "apellidos": "Torres Vega Actualizada",
+  "email": "ana.torres.updated@email.com",
+  "telefono": "+57 310 456 0000",
+  "estadoActivo": true
+}
+
+### -------------------------------------------------------
+### 6. Eliminar un cliente (reemplazar clienteId)
+### -------------------------------------------------------
+DELETE {{baseUrl}}/{{clienteId}}
+
+### -------------------------------------------------------
+### 7. Crear cliente con email duplicado (debe retornar 409)
+### -------------------------------------------------------
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "nombres": "Duplicado",
+  "apellidos": "Test",
+  "email": "ana.torres@email.com",
+  "telefono": "+57 310 000 0000",
+  "estadoActivo": true
+}
+
+### -------------------------------------------------------
+### 8. Crear cliente con datos inválidos (debe retornar 400)
+### -------------------------------------------------------
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "nombres": "",
+  "apellidos": "",
+  "email": "email-invalido",
+  "telefono": "abc",
+  "estadoActivo": true
+}
+
+### -------------------------------------------------------
+### 9. Buscar cliente inexistente (debe retornar 404)
+### -------------------------------------------------------
+GET {{baseUrl}}/00000000-0000-0000-0000-000000000000
+Accept: application/json
