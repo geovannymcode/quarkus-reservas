@@ -1,4 +1,4 @@
-# Reservas Profesionales — Evaluación Final Quarkus 2026
+# Quarkus-Reservas — Evaluación Final Quarkus 2026
 
 Sistema REST para el control de reservas y disponibilidad de profesionales en un centro de servicios (psicología, mentorías, asesorías, tutorías).
 
@@ -9,7 +9,7 @@ Sistema REST para el control de reservas y disponibilidad de profesionales en un
 ### Arquitectura: DDD Ligero (Domain / Application / Infrastructure)
 
 ```
-src/main/java/com/mitocode/reservas/
+src/main/java/com/geovannycode/reservas/
 ├── domain/
 │   ├── model/          → Entidades JPA (Profesional, Cliente, HorarioDisponible, Reserva)
 │   ├── enums/          → EstadoReserva (CREADA, CANCELADA, COMPLETADA)
@@ -30,7 +30,7 @@ src/main/java/com/mitocode/reservas/
 
 | Componente | Versión | Rol |
 |---|---|---|
-| Quarkus | 3.17.4 | Framework principal |
+| Quarkus | 3.31.4 | Framework principal |
 | Hibernate Reactive + Panache | (via BOM) | ORM reactivo |
 | Vert.x PG Client | (via BOM) | Driver reactivo PostgreSQL |
 | Mutiny | (via BOM) | Programación reactiva (Uni/Multi) |
@@ -56,7 +56,7 @@ src/main/java/com/mitocode/reservas/
 Todos los endpoints y operaciones con BD usan `Uni<T>`:
 - `@WithSession` en métodos de lectura
 - `@WithTransaction` en métodos de escritura (garantiza sesión reactiva y transacción)
-- `Uni.combine().all().unis(...).asTuple()` para operaciones paralelas
+- Encadenamiento secuencial con `flatMap` (Hibernate Reactive no soporta queries paralelas en la misma sesión)
 
 ### Fault Tolerance (SmallRye)
 
@@ -97,7 +97,7 @@ reservas.stream()
 ### Modo Desarrollo (Dev Services — PostgreSQL automático)
 
 ```bash
-cd reservas-profesionales
+cd Quarkus-Reservas
 ./mvnw quarkus:dev
 ```
 
@@ -133,12 +133,12 @@ java -jar target/quarkus-app/quarkus-run.jar \
 
 ```bash
 ./mvnw package -DskipTests
-docker build -f Dockerfile.jvm -t reservas-profesionales:jvm .
+docker build -f Dockerfile.jvm -t quarkus-reservas:jvm .
 docker run -p 8080:8080 \
   -e DB_HOST=host.docker.internal \
   -e DB_USERNAME=postgres \
   -e DB_PASSWORD=postgres \
-  reservas-profesionales:jvm
+  quarkus-reservas:jvm
 ```
 
 ### Imagen Docker Nativa (GraalVM)
@@ -147,12 +147,12 @@ docker run -p 8080:8080 \
 # Compila con GraalVM en contenedor (no necesita GraalVM local)
 ./mvnw package -Pnative -Dquarkus.native.container-build=true -DskipTests
 
-docker build -f Dockerfile.native -t reservas-profesionales:native .
+docker build -f Dockerfile.native -t quarkus-reservas:native .
 docker run -p 8080:8080 \
   -e DB_HOST=host.docker.internal \
   -e DB_USERNAME=postgres \
   -e DB_PASSWORD=postgres \
-  reservas-profesionales:native
+  quarkus-reservas:native
 ```
 
 ### Ejecutar Tests
